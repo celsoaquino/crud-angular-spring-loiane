@@ -15,12 +15,12 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/courses")
+@RequestMapping("/api")
 public class CourseController {
 
     private final CourseRepository courseRepository;
 
-    @GetMapping
+    @GetMapping("/courses")
     public List<Course> list() {
         return courseRepository.findAll();
     }
