@@ -15,13 +15,14 @@ import { CoursesService } from '../services/courses.service';
 export class CoursesComponent {
 
   courses$: Observable<Course[]>;
-  displayedColumns = ['name', 'category', 'actions'];
+
 
   constructor(
     private couseService: CoursesService,
     public dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute
+
     ) {
     this.courses$ = couseService.list()
     .pipe(
