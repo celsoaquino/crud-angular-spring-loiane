@@ -1,33 +1,44 @@
+import { Course } from './../../model/course';
 import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
 
 import { CoursesService } from '../../services/courses.service';
 
-@Component( {
+@Component({
   selector: 'app-course-form',
   templateUrl: './course-form.component.html',
-  styleUrls: ['./course-form.component.scss']
+  styleUrls: ['./course-form.component.scss'],
 })
 export class CourseFormComponent {
-
   form = this.formBuilder.group({
+    _id: [''],
     name: [''],
-    category: ['']
-
+    category: [''],
   });
 
-  constructor(private formBuilder: NonNullableFormBuilder,
+  constructor(
+    private formBuilder: NonNullableFormBuilder,
     private cursoService: CoursesService,
     private _snackBar: MatSnackBar,
-    private location: Location
-    ) {}
+    private location: Location,
+    private route: ActivatedRoute
+  ) {
+    const course: Course = this.route.snapshot.data['course'];
+    this.form.setValue({
+      _id: course._id,
+      name: course.name,
+      category: course.category,
+    });
+  }
 
   onSubmit() {
-    this.cursoService.save(this.form.value)
-    .subscribe(result =>  this.onSuccess(), error => this.onError());
-
+    this.cursoService.save(this.form.value).subscribe(
+      (result) => this.onSuccess(),
+      (error) => this.onError()
+    );
   }
 
   onCancel() {
