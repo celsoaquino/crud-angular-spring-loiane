@@ -7,6 +7,7 @@ import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/err
 import { Course } from '../../model/course';
 import { CoursesService } from '../../services/courses.service';
 
+
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
@@ -41,7 +42,12 @@ export class CoursesComponent {
   }
 
   onAdd() {
-    this.router.navigate(['new'], {relativeTo: this.route})
+    this.router.navigate(['new'], {relativeTo: this.route});
+  }
+
+  onEdit(course: Course) {
+    console.log(course)
+    this.router.navigate(['edit', course._id], {relativeTo: this.route});
   }
 
 }
