@@ -12,6 +12,12 @@ mat-card {
   width: 100%;
   min-width: 150px;
 }
+
 .mat-mdc-button-base {
   margin: 8px;
+
+}
+
+.mdc-card__actions {
+  justify-content: center;
 }
