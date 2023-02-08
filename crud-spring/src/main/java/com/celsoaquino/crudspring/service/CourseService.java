@@ -1,8 +1,9 @@
 package com.celsoaquino.crudspring.service;
 
 
+import com.celsoaquino.crudspring.dto.CourseDTO;
+import com.celsoaquino.crudspring.dto.mapper.CourseMapper;
 import com.celsoaquino.crudspring.exception.RecordNotFoundException;
-import com.celsoaquino.crudspring.model.Course;
 import com.celsoaquino.crudspring.repository.CourseRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -12,36 +13,45 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Validated
 @Service
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper) {
         this.courseRepository = courseRepository;
+        this.courseMapper = courseMapper;
     }
 
-    public List<Course> list() {
-        return courseRepository.findAll();
+    public List<CourseDTO> list() {
+        return courseRepository.findAll()
+                .stream()
+                .map(courseMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
-    public Course findById(@NotNull @Positive Long id) {
-        return courseRepository.findById(id).orElseThrow(() -> new RecordNotFoundException(id));
+    public CourseDTO findById(@PathVariable @NotNull @Positive Long id) {
+        return courseRepository.findById(id)
+                .map(courseMapper::toDTO)
+                .orElseThrow(() -> new RecordNotFoundException(id));
     }
 
-    public Course create(@Valid Course course) {
-        return courseRepository.save(course);
+    public CourseDTO create(@Valid @NotNull CourseDTO course) {
+        return courseMapper.toDTO(courseRepository.save(courseMapper.toEntity(course)));
     }
 
-    public Course update(@PathVariable @NotNull @Positive Long id, @Valid Course course) {
+    public CourseDTO update(@PathVariable @NotNull @Positive Long id, @Valid @NotNull CourseDTO course) {
         return courseRepository.findById(id)
                 .map(record -> {
-                    record.setName(course.getName());
-                    record.setCategory(course.getCategory());
-                    return courseRepository.save(record);
-                }).orElseThrow(() -> new RecordNotFoundException(id));
+                    record.setName(course.name());
+                    record.setCategory(course.category());
+                    return courseMapper.toDTO(courseRepository.save(record));
+                })
+                .orElseThrow(() -> new RecordNotFoundException(id));
     }
 
     public void delete(@NotNull @Positive Long id) {
