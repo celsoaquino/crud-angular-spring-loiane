@@ -1,6 +1,5 @@
 package com.celsoaquino.crudspring;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
