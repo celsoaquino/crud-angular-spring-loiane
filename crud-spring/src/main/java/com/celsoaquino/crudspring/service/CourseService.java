@@ -3,6 +3,7 @@ package com.celsoaquino.crudspring.service;
 
 import com.celsoaquino.crudspring.dto.CourseDTO;
 import com.celsoaquino.crudspring.dto.mapper.CourseMapper;
+import com.celsoaquino.crudspring.enums.Category;
 import com.celsoaquino.crudspring.exception.RecordNotFoundException;
 import com.celsoaquino.crudspring.repository.CourseRepository;
 import jakarta.validation.Valid;
@@ -48,7 +49,7 @@ public class CourseService {
         return courseRepository.findById(id)
                 .map(record -> {
                     record.setName(course.name());
-                    record.setCategory(course.category());
+                    record.setCategory(Category.FRONT_END);
                     return courseMapper.toDTO(courseRepository.save(record));
                 })
                 .orElseThrow(() -> new RecordNotFoundException(id));
