@@ -1,17 +1,27 @@
 package com.celsoaquino.crudspring.dto.mapper;
 
 import com.celsoaquino.crudspring.dto.CourseDTO;
+import com.celsoaquino.crudspring.dto.LessonDTO;
 import com.celsoaquino.crudspring.enums.Category;
 import com.celsoaquino.crudspring.model.Course;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CourseMapper {
 
     public CourseDTO toDTO(Course course) {
         if (course == null) return null;
+
+        List<LessonDTO> lessons = course.getLessons()
+                .stream()
+                .map(lesson -> new LessonDTO(lesson.getId(), lesson.getName(), lesson.getYoutubeUrl()))
+                .collect(Collectors.toList());
+
         return new CourseDTO(course.getId(), course.getName(), course.getCategory().getValue(),
-                course.getLessons());
+                lessons);
     }
 
     public Course toEntity(CourseDTO courseDTO) {

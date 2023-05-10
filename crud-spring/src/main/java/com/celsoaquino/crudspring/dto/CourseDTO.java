@@ -1,6 +1,5 @@
 package com.celsoaquino.crudspring.dto;
 
-import com.celsoaquino.crudspring.model.Lesson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,5 +11,5 @@ public record CourseDTO(
         @JsonProperty("_id") Long id,
         @NotBlank @NotNull @Length(min = 5, max = 100) String name,
         @NotNull String category,
-        List<Lesson> lessons) {
+        List<LessonDTO> lessons) {
 }
