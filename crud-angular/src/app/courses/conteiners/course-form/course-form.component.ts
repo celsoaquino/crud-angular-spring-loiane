@@ -62,6 +62,16 @@ export class CourseFormComponent {
     return (<UntypedFormArray>this.form.get('lessons')).controls;
   }
 
+  addNewLesson() {
+    const lessons =  this.form.get('lessons') as UntypedFormArray;
+    lessons.push(this.createLesson());
+    }
+
+    removeLesson(index: number) {
+      const lessons =  this.form.get('lessons') as UntypedFormArray;
+      lessons.removeAt(index);
+      }
+
   onSubmit() {
     this.cursoService.save(this.form.value).subscribe(
       (result) => this.onSuccess(),
