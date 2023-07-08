@@ -1,7 +1,7 @@
 import { Course } from './../../model/course';
 import { Location } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormGroup, NonNullableFormBuilder, UntypedFormArray, Validators } from '@angular/forms';
+import { FormGroup, NonNullableFormBuilder, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 
@@ -35,6 +35,7 @@ export class CourseFormComponent {
       lessons: this.formBuilder.array(this.retrieveLessons(course), Validators.required)
     });
   }
+
 
   private retrieveLessons(course: Course) {
     const lessons = [];
@@ -97,33 +98,8 @@ export class CourseFormComponent {
     this.location.back();
   }
 
-  getErrorMessage(fieldName: string) {
-    const field = this.form.get(fieldName);
+  getErrorMessage(formGroup: UntypedFormGroup, fieldName: string) {
 
-    if (field?.hasError('required')) {
-      return 'Campo obrigatório';
-    }
-
-    if (field?.hasError('minlength')) {
-      const requiredLength = field.errors
-        ? field.errors['minlength']['requiredLength']
-        : 5;
-      return `Tamanho mínimo precisa ser de ${requiredLength} caracteres.`;
-    }
-
-    if (field?.hasError('maxlength')) {
-      console.log(field);
-      const requiredLength = field.errors
-        ? field.errors['maxlength']['requiredLength']
-        : 200;
-      return `Tamanho máximo excedido de ${requiredLength} caracteres.`;
-    }
-
-    return 'Campo Inválido.';
   }
 
-  isFormArrayRequired() {
-    const lessons =  this.form.get('lessons') as UntypedFormArray;
-    return !lessons.valid && lessons.hasError('required') && lessons.touched;
-  }
 }
