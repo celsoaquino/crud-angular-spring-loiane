@@ -1,12 +1,13 @@
 import { Course } from './../../model/course';
 import { Location } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormGroup, NonNullableFormBuilder, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 
 import { CoursesService } from '../../services/courses.service';
 import { Lesson } from '../../model/lesson';
+import { FormUtilsService } from 'src/app/shared/form/form-utils.service';
 
 @Component({
   selector: 'app-course-form',
@@ -14,6 +15,8 @@ import { Lesson } from '../../model/lesson';
   styleUrls: ['./course-form.component.scss'],
 })
 export class CourseFormComponent {
+
+  formUtils = inject(FormUtilsService);
 
   form: FormGroup;
 
@@ -35,7 +38,6 @@ export class CourseFormComponent {
       lessons: this.formBuilder.array(this.retrieveLessons(course), Validators.required)
     });
   }
-
 
   private retrieveLessons(course: Course) {
     const lessons = [];
@@ -97,9 +99,4 @@ export class CourseFormComponent {
     this._snackBar.open('Curso salvo com sucesso!', '', { duration: 5000 });
     this.location.back();
   }
-
-  getErrorMessage(formGroup: UntypedFormGroup, fieldName: string) {
-
-  }
-
 }

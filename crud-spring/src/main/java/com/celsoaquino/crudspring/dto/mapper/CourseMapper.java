@@ -4,10 +4,12 @@ import com.celsoaquino.crudspring.dto.CourseDTO;
 import com.celsoaquino.crudspring.dto.LessonDTO;
 import com.celsoaquino.crudspring.enums.Category;
 import com.celsoaquino.crudspring.model.Course;
+import com.celsoaquino.crudspring.model.Lesson;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class CourseMapper {
@@ -18,7 +20,7 @@ public class CourseMapper {
         List<LessonDTO> lessons = course.getLessons()
                 .stream()
                 .map(lesson -> new LessonDTO(lesson.getId(), lesson.getName(), lesson.getYoutubeUrl()))
-                .collect(Collectors.toList());
+                .collect(toList());
 
         return new CourseDTO(course.getId(), course.getName(), course.getCategory().getValue(),
                 lessons);
@@ -33,6 +35,16 @@ public class CourseMapper {
         }
         course.setName(courseDTO.name());
         course.setCategory(convertCategoryValue(courseDTO.category()));
+
+        List<Lesson> lessons = courseDTO.lessons().stream().map(lessonDTO -> {
+            var lesson = new Lesson();
+            lesson.setId(lessonDTO.id());
+            lesson.setName(lessonDTO.name());
+            lesson.setYoutubeUrl(lessonDTO.youtubeUrl());
+            lesson.setCourse(course);
+            return lesson;
+        }).toList();
+        course.setLessons(lessons);
         return course;
     }
 
