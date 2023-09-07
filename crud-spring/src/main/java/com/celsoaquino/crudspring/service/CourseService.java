@@ -2,13 +2,18 @@ package com.celsoaquino.crudspring.service;
 
 
 import com.celsoaquino.crudspring.dto.CourseDTO;
+import com.celsoaquino.crudspring.dto.CoursePageDTO;
 import com.celsoaquino.crudspring.dto.mapper.CourseMapper;
 import com.celsoaquino.crudspring.exception.RecordNotFoundException;
 import com.celsoaquino.crudspring.model.Course;
 import com.celsoaquino.crudspring.repository.CourseRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -27,12 +32,20 @@ public class CourseService {
         this.courseMapper = courseMapper;
     }
 
-    public List<CourseDTO> list() {
+    public CoursePageDTO list(@PositiveOrZero int page, @Positive @Max(100) int pageSize) {
+        Page<Course> coursePage = courseRepository.findAll(PageRequest.of(page, pageSize));
+        List<CourseDTO> courseDTOS = coursePage.get().map(courseMapper::toDTO).toList();
+        return new CoursePageDTO(courseDTOS, coursePage.getTotalElements(), coursePage.getTotalPages());
+    }
+
+   /*
+   metodo sem paginação
+   public List<CourseDTO> list() {
         return courseRepository.findAll()
                 .stream()
                 .map(courseMapper::toDTO)
                 .collect(Collectors.toList());
-    }
+    }*/
 
     public CourseDTO findById(@NotNull @Positive Long id) {
         return courseRepository.findById(id)
