@@ -19,7 +19,6 @@ import java.util.List;
 @RequestMapping("/api/courses")
 public class CourseController {
 
-
     private final CourseService courseService;
 
     public CourseController(CourseService courseService) {
