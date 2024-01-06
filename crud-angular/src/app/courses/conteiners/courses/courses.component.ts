@@ -1,13 +1,15 @@
-import { Component } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, Observable, of } from 'rxjs';
+import {catchError, Observable, of, tap} from 'rxjs';
 import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
 import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
 
 import { Course } from '../../model/course';
 import { CoursesService } from '../../services/courses.service';
+import {CoursePage} from "../../model/course-page";
+import {MatPaginator, PageEvent} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-courses',
@@ -15,7 +17,12 @@ import { CoursesService } from '../../services/courses.service';
   styleUrls: ['./courses.component.scss'],
 })
 export class CoursesComponent {
-  courses$: Observable<Course[]> | null = null;
+  courses$: Observable<CoursePage> | null = null;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  pageIndex = 0;
+  pageSize = 10;
 
   constructor(
     private couseService: CoursesService,
@@ -27,12 +34,16 @@ export class CoursesComponent {
     this.refresh();
   }
 
-  refresh() {
-    this.courses$ = this.couseService.list().pipe(
+  refresh(pageEvent: PageEvent = {length: 0, pageIndex: 0, pageSize: 10}) {
+    this.courses$ = this.couseService.list(pageEvent.pageIndex, pageEvent.pageSize).pipe(
+      tap( () => {
+        this.pageIndex = pageEvent.pageIndex;
+        this.pageSize = pageEvent.pageSize;
+      }),
       catchError((error) => {
         console.log(error);
         this.onError('Erro ao carregar cursos.');
-        return of([]);
+        return of({courses: [], totalElements: 0, totalPages: 0 });
       })
     );
   }
